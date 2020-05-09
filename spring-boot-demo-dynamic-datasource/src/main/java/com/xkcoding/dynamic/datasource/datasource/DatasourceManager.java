@@ -41,6 +41,8 @@ public class DatasourceManager {
      * @return 是否过期，{@code true} 过期，{@code false} 未过期
      */
     public boolean isExpired() {
+        //A.isBefore(B) A是否在B之前
+        //plusMinutes 增加指定分钟
         if (LocalDateTime.now().isBefore(this.lastUseTime.plusMinutes(DEFAULT_RELEASE))) {
             return false;
         }

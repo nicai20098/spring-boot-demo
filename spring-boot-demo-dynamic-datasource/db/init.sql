@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS `datasource_config`
   DEFAULT CHARSET = utf8 COMMENT ='数据源配置表';
 
 INSERT INTO `datasource_config`(`id`, `host`, `port`, `username`, `password`, `database`)
-VALUES (1, '127.0.01', 3306, 'root', 'root', 'test');
+VALUES (1, '127.0.0.1', 3306, 'root', '123456', 'test');
 INSERT INTO `datasource_config`(`id`, `host`, `port`, `username`, `password`, `database`)
 VALUES (2, '192.168.239.4', 3306, 'dmcp', 'Dmcp321!', 'test');
