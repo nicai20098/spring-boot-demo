@@ -58,20 +58,25 @@ public class JwtUtil {
      */
     public String createJWT(Boolean rememberMe, Long id, String subject, List<String> roles, Collection<? extends GrantedAuthority> authorities) {
         Date now = new Date();
+        //建造者模式建造对象
         JwtBuilder builder = Jwts.builder()
+                //用户id
                 .setId(id.toString())
+                //用户名称
                 .setSubject(subject)
                 .setIssuedAt(now)
+                //生成密钥
                 .signWith(SignatureAlgorithm.HS256, jwtConfig.getKey())
                 .claim("roles", roles)
                 .claim("authorities", authorities);
 
-        // 设置过期时间
+        // 设置过期时间 判断是否是记住用户 然后设置固定的时间
         Long ttl = rememberMe ? jwtConfig.getRemember() : jwtConfig.getTtl();
         if (ttl > 0) {
+            //设置过期时间
             builder.setExpiration(DateUtil.offsetMillisecond(now, ttl.intValue()));
         }
-
+        //生成token
         String jwt = builder.compact();
         // 将生成的JWT保存至Redis
         stringRedisTemplate.opsForValue()

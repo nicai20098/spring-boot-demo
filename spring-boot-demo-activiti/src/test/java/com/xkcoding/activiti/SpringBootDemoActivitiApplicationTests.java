@@ -22,7 +22,7 @@ public class SpringBootDemoActivitiApplicationTests {
 
     @Test
     public void contextLoads() {
-        securityUtil.logInAs("salaboy");
+        securityUtil.logInAs("ryandawsonuk");
         Page<ProcessDefinition> processDefinitionPage = processRuntime.processDefinitions(Pageable.of(0, 10));
         processDefinitionPage.getContent().forEach(System.out::println);
     }

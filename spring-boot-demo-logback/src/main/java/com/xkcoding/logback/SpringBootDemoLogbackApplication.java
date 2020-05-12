@@ -22,6 +22,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @Slf4j
 public class SpringBootDemoLogbackApplication {
 
+    @SuppressWarnings("all")
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(SpringBootDemoLogbackApplication.class, args);
 		int length = context.getBeanDefinitionNames().length;

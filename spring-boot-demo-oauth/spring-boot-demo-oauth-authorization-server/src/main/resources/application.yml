@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8000
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/oauth?allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/spring-boot-demo?allowPublicKeyRetrieval=true
     username: root
     password: 123456
     hikari:

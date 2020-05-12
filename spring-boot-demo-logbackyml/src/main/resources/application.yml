@@ -1,0 +1,11 @@
+logging:
+  pattern:
+    console: "%d - %msg%n"
+  path: D:/
+#  file: demo.log
+  level:
+    com.xkcoding.logback: trace
+server:
+  port: 8001
+  servlet:
+    context-path: /demo

@@ -1,183 +1,144 @@
-# spring-boot-demo-logback
+# Spring-logback
 
-> 此 demo 主要演示了如何使用 logback 记录程序运行过程中的日志，以及如何配置 logback，可以同时生成控制台日志和文件日志记录，文件日志以日期和大小进行拆分生成。
+### 1.配置方式
 
-## pom.xml
+​	默认情况下springboot是不将日志输出到日志文件中的 但是支持对日志框架的两种配置方式:
+
+- application.properties 或  application.yml （系统层面）
+- logback-spring.xml                （自定义文件方式）
+
+> 说明:
+>
+> ​	第一种方式比较简单 可做的事情比较少 比如配置日志文件路径,日志文件格式等
+>
+> ​	第二种方式比较复杂 比如可以区分info和error日志 可以每天产生一个日志文件等		
+
+##### 	1.1采用application.properties 或 application.yml配置方式
+
+```yaml
+logging:
+  pattern:
+    console: "%d - %msg%n"
+  path: D:/
+  file: demo.log
+  level:
+    com.xkcoding.logback: trace
+```
+
+> 说明:
+>
+> ​	若只配置logging.path 会在指定的位置生成一个spring.log的配置文件 名字是不可以i修改的 是可以创建目录的
+>
+> ​	若只配置logging.file 就会在当前项目的的根目录生成一个对应名字的日志文件
+>
+> ​	若logging.path和file同时配置 只有logging.file生效
+>
+> ​	都可以使用绝对和相对路径
+
+##### 	1.2采用logback-spring.xml配置方式
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<configuration debug="true">
 
-	<artifactId>spring-boot-demo-logback</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <!-- 彩色日志 -->
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }) [%t]{magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wex"/>
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%t] %-40.40logger{39} : %m%n%wex"/>
+     
+    <!--多环境的日志输出-->
+    <!--根据不同环境（prod:生产环境，test:测试环境，dev:开发环境）来定义不同的日志输出，-->
+    <!--在 logback-spring.xml中使用 springProfile 节点来定义，方法如下：-->
+    <springProfile name="prod">
+        <property name="LOG_HOME" value="/data/dubbo/platform-action/log/" />
+    </springProfile>
+    <springProfile name="stg">
+        <property name="LOG_HOME" value="/data/dubbo/platform-action/log/" />
+    </springProfile>
+    <springProfile name="dev">
+        <property name="LOG_HOME" value="/data/dubbo/platform-action/log/" />
+    </springProfile>
+    <springProfile name="pre">
+        <property name="LOG_HOME" value="/data/dubbo/platform-action/log/" />
+    </springProfile>
 
-	<name>spring-boot-demo-logback</name>
-	<description>Demo project for Spring Boot</description>
+    <!--输出到控制台-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
 
-	<parent>
-		<groupId>com.xkcoding</groupId>
-		<artifactId>spring-boot-demo</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
+    <!--info 级别的日志-->
+    <!-- 按照每天生成日志文件 -->
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-	</properties>
+            <!--日志文件输出的文件名-->
+            <fileNamePattern>${LOG_HOME}/info.%d{yyyy-MM-dd}.log</fileNamePattern>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+            <!--日志文件保留天数-->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <!--日志文件最大的大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+          <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
 
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-	</dependencies>
+    
+    <!--WARN 级别的日志-->
+    <appender name="WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/warn.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
 
-	<build>
-		<finalName>spring-boot-demo-logback</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
-</project>
-```
-
-## SpringBootDemoLogbackApplication.java
-
-```java
-/**
- * <p>
- * 启动类
- * </p>
- *
- * @package: com.xkcoding.logback
- * @description: 启动类
- * @author: yangkai.shen
- * @date: Created in 2018/9/30 11:16 PM
- * @copyright: Copyright (c) 2018
- * @version: V1.0
- * @modified: yangkai.shen
- */
-@SpringBootApplication
-@Slf4j
-public class SpringBootDemoLogbackApplication {
-
-	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(SpringBootDemoLogbackApplication.class, args);
-		int length = context.getBeanDefinitionNames().length;
-		log.trace("Spring boot启动初始化了 {} 个 Bean", length);
-		log.debug("Spring boot启动初始化了 {} 个 Bean", length);
-		log.info("Spring boot启动初始化了 {} 个 Bean", length);
-		log.warn("Spring boot启动初始化了 {} 个 Bean", length);
-		log.error("Spring boot启动初始化了 {} 个 Bean", length);
-		try {
-			int i = 0;
-			int j = 1 / i;
-		} catch (Exception e) {
-			log.error("【SpringBootDemoLogbackApplication】启动异常：", e);
-		}
-	}
-}
-```
-
-## logback-spring.xml
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<level>INFO</level>
-		</filter>
-		<encoder>
-			<pattern>%date [%thread] %-5level [%logger{50}] %file:%line - %msg%n</pattern>
-			<charset>UTF-8</charset>
-		</encoder>
-	</appender>
-
-	<appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<!--如果只是想要 Info 级别的日志，只是过滤 info 还是会输出 Error 日志，因为 Error 的级别高， 所以我们使用下面的策略，可以避免输出 Error 的日志-->
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<!--过滤 Error-->
-			<level>ERROR</level>
-			<!--匹配到就禁止-->
-			<onMatch>DENY</onMatch>
-			<!--没有匹配到就允许-->
-			<onMismatch>ACCEPT</onMismatch>
-		</filter>
-		<!--日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天的日志改名为今天的日期。即，<File> 的日志都是当天的。-->
-		<!--<File>logs/info.spring-boot-demo-logback.log</File>-->
-		<!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
-			<FileNamePattern>logs/spring-boot-demo-logback/info.created_on_%d{yyyy-MM-dd}.part_%i.log</FileNamePattern>
-			<!--只保留最近90天的日志-->
-			<maxHistory>90</maxHistory>
-			<!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
-			<!--<totalSizeCap>1GB</totalSizeCap>-->
-			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<!-- maxFileSize:这是活动文件的大小，默认值是10MB,本篇设置为1KB，只是为了演示 -->
-				<maxFileSize>2MB</maxFileSize>
-			</timeBasedFileNamingAndTriggeringPolicy>
-		</rollingPolicy>
-		<!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
-		<!--<maxFileSize>1KB</maxFileSize>-->
-		<!--</triggeringPolicy>-->
-		<encoder>
-			<pattern>%date [%thread] %-5level [%logger{50}] %file:%line - %msg%n</pattern>
-			<charset>UTF-8</charset> <!-- 此处设置字符集 -->
-		</encoder>
-	</appender>
-
-	<appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<!--如果只是想要 Error 级别的日志，那么需要过滤一下，默认是 info 级别的，ThresholdFilter-->
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>Error</level>
-		</filter>
-		<!--日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天的日志改名为今天的日期。即，<File> 的日志都是当天的。-->
-		<!--<File>logs/error.spring-boot-demo-logback.log</File>-->
-		<!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
-			<FileNamePattern>logs/spring-boot-demo-logback/error.created_on_%d{yyyy-MM-dd}.part_%i.log</FileNamePattern>
-			<!--只保留最近90天的日志-->
-			<maxHistory>90</maxHistory>
-			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<!-- maxFileSize:这是活动文件的大小，默认值是10MB,本篇设置为1KB，只是为了演示 -->
-				<maxFileSize>2MB</maxFileSize>
-			</timeBasedFileNamingAndTriggeringPolicy>
-		</rollingPolicy>
-		<encoder>
-			<pattern>%date [%thread] %-5level [%logger{50}] %file:%line - %msg%n</pattern>
-			<charset>UTF-8</charset> <!-- 此处设置字符集 -->
-		</encoder>
-	</appender>
-
-	<root level="info">
-		<appender-ref ref="CONSOLE"/>
-		<appender-ref ref="FILE_INFO"/>
-		<appender-ref ref="FILE_ERROR"/>
-	</root>
+    <!--ERROR 级别的日志-->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+    </appender>
+    
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="INFO"/>
+        <appender-ref ref="WARN"/>
+        <appender-ref ref="ERROR"/>
+    </root>
 </configuration>
 ```
 

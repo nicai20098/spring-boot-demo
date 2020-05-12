@@ -59,6 +59,9 @@ public class RedisUtil {
             String key = new String(cursor.next());
             if (tmpIndex >= startIndex && tmpIndex < end) {
                 result.add(key);
+            } else {
+                //增加超过范围 直接返回提高效率
+                break;
             }
             tmpIndex++;
         }

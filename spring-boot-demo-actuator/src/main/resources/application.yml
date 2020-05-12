@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8000
   servlet:
     context-path: /demo
 # 若要访问端点信息，需要配置用户名和密码
@@ -11,7 +11,7 @@ spring:
 management:
   # 端点信息接口使用的端口，为了和主系统接口使用的端口进行分离
   server:
-    port: 8090
+    port: 8001
     servlet:
       context-path: /sys
   # 端点健康情况，默认值"never"，设置为"always"可以显示硬盘使用情况和线程情况
