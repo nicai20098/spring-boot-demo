@@ -1,12 +1,12 @@
 server:
-  port: 8080
+  port: 8000
   servlet:
     context-path: /demo
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/quartz?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8
     username: root
-    password: root
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
@@ -32,6 +32,8 @@ spring:
       org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
       # 在调度流程的第一步，也就是拉取待即将触发的triggers时，是上锁的状态，即不会同时存在多个线程拉取到相同的trigger的情况，也就避免的重复调度的危险。参考：https://segmentfault.com/a/1190000015492260
       org.quartz.jobStore.acquireTriggersWithinLock: true
+  mvc:
+    static-path-pattern: /static/**
 logging:
   level:
     com.xkcoding: debug
@@ -55,4 +57,4 @@ pagehelper:
   auto-dialect: true
   helper-dialect: mysql
   reasonable: true
-  params: count=countSql
+  params: count=countSq
