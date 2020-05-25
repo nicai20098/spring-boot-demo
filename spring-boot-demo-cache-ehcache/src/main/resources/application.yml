@@ -6,3 +6,6 @@ spring:
 logging:
   level:
     com.xkcoding: debug
+
+server:
+  port: 8000

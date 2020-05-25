@@ -1,9 +1,9 @@
 server:
-  port: 8081
+  port: 8001
 security:
   oauth2:
     resource:
-      token-info-uri: http://localhost:8080/oauth/check_token
+      token-info-uri: http://localhost:8000/oauth/check_token
       jwt:
         key-alias: oauth2
         # 如果没有此项会去请求授权服务器获取
@@ -17,12 +17,12 @@ security:
           5/eENWBBBTFWya8RlBTzHuikfFS1gP49PZ6MYJIVRs8p9YnnKTy7TVcGKY3XZMCA
           mwIDAQAB
           -----END PUBLIC KEY-----
-        key-uri: http://localhost:8080/oauth/token_key
+        key-uri: http://localhost:8000/oauth/token_key
       id: oauth2
     client:
       client-id: oauth2
       client-secret: oauth2
-      access-token-uri: http://localhost:8080/oauth/token
+      access-token-uri: http://localhost:8000/oauth/token
       scope: READ
 
 logging:

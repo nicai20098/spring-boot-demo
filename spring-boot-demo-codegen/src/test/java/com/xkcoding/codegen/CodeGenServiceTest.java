@@ -44,9 +44,9 @@ public class CodeGenServiceTest {
         request.setCurrentPage(1);
         request.setPageSize(10);
         request.setPrepend("jdbc:mysql://");
-        request.setUrl("127.0.0.1:3306/spring-boot-demo");
+        request.setUrl("127.0.0.1:3306/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=GMT%2B8");
         request.setUsername("root");
-        request.setPassword("root");
+        request.setPassword("123456");
         request.setTableName("sec_");
         PageResult<Entity> pageResult = codeGenService.listTables(request);
         log.info("【pageResult】= {}", pageResult);

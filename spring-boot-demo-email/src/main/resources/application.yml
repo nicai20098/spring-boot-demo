@@ -18,3 +18,5 @@ spring:
 jasypt:
   encryptor:
     password: spring-boot-demo
+server:
+  port: 8000

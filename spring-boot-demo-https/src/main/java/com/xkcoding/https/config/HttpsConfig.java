@@ -19,15 +19,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HttpsConfig {
     /**
-     * 配置 http(80) -> 强制跳转到 https(443)
+     * 配置 http(8000) -> 强制跳转到 https(444)
      */
     @Bean
     public Connector connector() {
         Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
         connector.setScheme("http");
-        connector.setPort(80);
+        connector.setPort(8000);
         connector.setSecure(false);
-        connector.setRedirectPort(443);
+        connector.setRedirectPort(444);
         return connector;
     }
 

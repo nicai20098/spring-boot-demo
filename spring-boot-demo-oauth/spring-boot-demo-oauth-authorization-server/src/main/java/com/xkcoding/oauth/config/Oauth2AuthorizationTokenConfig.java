@@ -56,7 +56,9 @@ public class Oauth2AuthorizationTokenConfig {
      */
     @Bean
     public KeyPair keyPair() {
-        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("oauth2.jks"), "123456".toCharArray());
+//        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("oauth2.jks"), "123456".toCharArray());
+        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("oauth2.jks"), "sNcPeBUpDBef7F".toCharArray());
+//        jwtAccessTokenConverter.setKeyPair(keyStoreKeyFactory.getKeyPair("oauth2"));
         return keyStoreKeyFactory.getKeyPair("oauth2");
     }
 

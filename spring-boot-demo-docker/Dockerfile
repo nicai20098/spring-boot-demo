@@ -8,7 +8,7 @@ MAINTAINER "Yangkai.Shen 237497819@qq.com"
 VOLUME /tmp
 
 # 暴露8080端口
-EXPOSE 8080
+EXPOSE 8000
 
 # 添加变量，如果使用dockerfile-maven-plugin，则会自动替换这里的变量内容
 ARG JAR_FILE=target/spring-boot-demo-docker.jar
